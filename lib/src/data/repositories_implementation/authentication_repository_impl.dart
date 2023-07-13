@@ -3,12 +3,12 @@ import 'package:the_movie_db/src/domain/repositories/authentication_repository.d
 
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
   @override
-  Future<User> getUserData() {
+  Future<User?> getUserData() {
     return Future.value(User());
   }
 
   @override
-  Future<bool>? get isSignendIn {
+  Future<bool> get isSignendIn {
     return Future.value(true);
   }
 }
