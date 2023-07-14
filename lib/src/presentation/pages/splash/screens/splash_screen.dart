@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (hasInternet!) {
       final authenticationRepository = injector.authenticationRepository;
-      final isSignedIn = await authenticationRepository.isSignendIn;
+      final isSignedIn = await authenticationRepository.isSignedIn;
       if (isSignedIn) {
         final user = await authenticationRepository.getUserData();
         if (user != null) {
