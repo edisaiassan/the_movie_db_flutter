@@ -44,8 +44,8 @@ class _SplashScreenState extends State<SplashScreen> {
       } else if (mounted) {
         _goTo(Routes.signin);
       }
-    } else {
-      print('sin conexión');
+    } else if(mounted) {
+      _goTo(Routes.offline);
     }
   }
 

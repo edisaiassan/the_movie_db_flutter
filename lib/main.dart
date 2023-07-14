@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:the_movie_db/src/data/repositories_implementation/authentication_repository_impl.dart';
 import 'package:the_movie_db/src/data/repositories_implementation/connectivity_repository_impl.dart';
+import 'package:the_movie_db/src/data/services/remote/internet_checker.dart';
 import 'package:the_movie_db/src/my_app.dart';
 
 import 'src/domain/repositories/authentication_repository.dart';
@@ -11,7 +12,8 @@ void main() {
   runApp(
     Injector(
       connectivityRepository: ConnectivityRepositoryImpl(
-        Connectivity()
+        Connectivity(),
+        InternetChecker(),
       ),
       authenticationRepository: AuthenticationRepositoryImpl(),
       child: const MyApp(),
