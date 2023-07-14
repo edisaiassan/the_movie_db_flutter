@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_movie_db/main.dart';
-import 'package:the_movie_db/src/data/repositories_implementation/connectivity_repositories_impl.dart';
+import 'package:the_movie_db/src/data/repositories_implementation/connectivity_repository_impl.dart';
 import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/domain/repositories/connectivity_repository.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
@@ -33,24 +33,24 @@ class _SplashScreenState extends State<SplashScreen> {
       final isSignedIn = await authenticationRepository.isSignendIn;
       if (isSignedIn) {
         final user = await authenticationRepository.getUserData();
-        if(user != null) {
-          if(mounted) {
-            Navigator.pushReplacementNamed(
-          context,
-          Routes.home,
-        );
+        if (user != null) {
+          if (mounted) {
+           _goTo(Routes.home);
           }
         } else {
-          print('No hay datos del usuario');
+          _goTo(Routes.signin);
         }
         print('get data');
       } else if (mounted) {
-        Navigator.pushReplacementNamed(
-          context,
-          Routes.signin,
-        );
+        _goTo(Routes.signin);
       }
-    } else {}
+    } else {
+      print('sin conexión');
+    }
+  }
+
+  void _goTo(String routeName)  {
+    Navigator.pushReplacementNamed(context, routeName);
   }
 
   @override
