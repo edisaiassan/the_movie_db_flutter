@@ -7,14 +7,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'The Movie DB',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return GestureDetector(
+      onTap: () =>  FocusManager.instance.primaryFocus?.unfocus(),
+      child: MaterialApp(
+        title: 'The Movie DB',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        initialRoute: Routes.splash,
+        routes: appRoutes,
       ),
-      initialRoute: Routes.splash,
-      routes: appRoutes,
     );
   }
 }

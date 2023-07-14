@@ -1,16 +1,4 @@
 
-Either<SignInFailure, String> signIn(String username, String password) {
-  if (username != 'test') {
-    return Either.left(SignInFailure.notFound); //Falla el username
-  }
-  if (password != '123456') {
-    return Either.left(SignInFailure.unauthorized); //Falla la contraseña
-  }
-  return Either.right('sessionId');
-}
-
-enum SignInFailure { notFound, unauthorized, unknown }
-
 //Estos dos datos son los que devuelven en un
 //inicio de sesión, si falla será de tipo Enum
 //pero si no, devuelve un String que pronto será
