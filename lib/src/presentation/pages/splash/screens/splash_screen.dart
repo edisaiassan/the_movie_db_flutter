@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:the_movie_db/main.dart';
-import 'package:the_movie_db/src/data/repositories_implementation/connectivity_repository_impl.dart';
-import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
-import 'package:the_movie_db/src/domain/repositories/connectivity_repository.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -22,34 +19,31 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _init() async {
-    final injector = Injector.of(context);
-    final connectivityRepository = injector.connectivityRepository;
-    final hasInternet = await connectivityRepository.hasInternet;
+    final routeName = await () async {
+      final injector = Injector.of(context);
+      final connectivityRepository = injector.connectivityRepository;
+      final hasInternet = await connectivityRepository.hasInternet;
 
-    print('hasInternet $hasInternet');
+      if (!hasInternet) {
+        return Routes.offline;
+      }
 
-    if (hasInternet!) {
       final authenticationRepository = injector.authenticationRepository;
       final isSignedIn = await authenticationRepository.isSignedIn;
-      if (isSignedIn) {
-        final user = await authenticationRepository.getUserData();
-        if (user != null) {
-          if (mounted) {
-           _goTo(Routes.home);
-          }
-        } else {
-          _goTo(Routes.signin);
-        }
-        print('get data');
-      } else if (mounted) {
-        _goTo(Routes.signin);
+
+      if (!isSignedIn) {
+        return Routes.signIn;
       }
-    } else if(mounted) {
-      _goTo(Routes.offline);
+      final user = await authenticationRepository.getUserData();
+      return user == null ? Routes.signIn : Routes.home;
+    }();
+
+    if (mounted) {
+      _goTo(routeName);
     }
   }
 
-  void _goTo(String routeName)  {
+  void _goTo(String routeName) {
     Navigator.pushReplacementNamed(context, routeName);
   }
 

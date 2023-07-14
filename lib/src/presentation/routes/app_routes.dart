@@ -8,6 +8,6 @@ import 'package:the_movie_db/src/presentation/routes/routes.dart';
 Map<String, Widget Function(BuildContext)> get appRoutes => {
   Routes.splash: (context) => const SplashScreen(),
   Routes.offline: (context) => const OfflineScreen(),
-  Routes.signin: (context) => const SignInScreen(),
+  Routes.signIn: (context) => const SignInScreen(),
   Routes.home: (context) => const HomeScreen(),
 };

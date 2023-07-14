@@ -8,7 +8,7 @@ class ConnectivityRepositoryImpl implements ConnectivityRepository {
   final InternetChecker _internetChecker;
 
   @override
-  Future<bool>? get hasInternet async {
+  Future<bool> get hasInternet async {
     final result = await _connectivity.checkConnectivity();
     if (result == ConnectivityResult.none) {
       return false;
