@@ -1,8 +1,10 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:the_movie_db/src/data/repositories_implementation/authentication_repository_impl.dart';
 import 'package:the_movie_db/src/data/repositories_implementation/connectivity_repository_impl.dart';
+import 'package:the_movie_db/src/data/services/remote/authentication_api.dart';
 import 'package:the_movie_db/src/data/services/remote/internet_checker.dart';
 import 'package:the_movie_db/src/my_app.dart';
 
@@ -17,7 +19,8 @@ void main() {
         InternetChecker(),
       ),
       authenticationRepository: AuthenticationRepositoryImpl(
-        const FlutterSecureStorage()
+        const FlutterSecureStorage(),
+        AuthenticationAPI(http.Client()),
       ),
       child: const MyApp(),
     ),
