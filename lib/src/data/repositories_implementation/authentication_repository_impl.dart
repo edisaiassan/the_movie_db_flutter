@@ -32,20 +32,37 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     String username,
     String password,
   ) async {
-    print('iniciando 😎1');
     final requestToken = await _authenticationAPI.createRequestToken();
 
-    await _authenticationAPI.createRequestToken();
-    await Future.delayed(const Duration(seconds: 3));
-    print('iniciando 😎2');
-    if (username != 'test') {
-      return Either.left(SignInFailure.notFound);
+    if (requestToken == null) {
+      return Either.left(SignInFailure.unknown);
     }
-    if (password != '123456') {
-      return Either.left(SignInFailure.unauthorized);
-    }
-    _secureStorage.write(key: _key, value: '123');
-    return Either.right(User());
+
+    final loginResult = await _authenticationAPI.createSessionWithLogin(
+      username: username,
+      password: password,
+      requestToken: requestToken,
+    );
+
+    return loginResult.when(
+      (failure) async => Either.left(failure),
+      (newRequestToken) async {
+        final sessionResult =
+            await _authenticationAPI.createSession(newRequestToken);
+            
+        return sessionResult.when(
+          (failure) async => Either.left(failure),
+          (sessionId) async {
+            print('🔥 $sessionId sdsdsd-------------');
+            await _secureStorage.write(
+              key: _key,
+              value: sessionId,
+            );
+            return Either.right(User());
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -53,3 +70,6 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     return _secureStorage.delete(key: _key);
   }
 }
+
+
+

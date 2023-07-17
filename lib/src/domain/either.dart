@@ -27,9 +27,9 @@ class Either<Left, Right> {
    T Function(Right) right,
   ) {
     if (isLeft) {
-      return left(_left!); //isLeft no es nulo, entonces retorna el _left, el error
+      return left(_left as Left); //isLeft no es nulo, entonces retorna el _left, el error
     } else {
-      return right(_right!); //si lo es retorna el _right, la sesión correcta
+      return right(_right as Right); //si lo es retorna el _right, la sesión correcta
     }
   }
 }
