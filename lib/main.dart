@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:the_movie_db/src/data/http/http.dart';
 import 'package:the_movie_db/src/data/repositories_implementation/authentication_repository_impl.dart';
 import 'package:the_movie_db/src/data/repositories_implementation/connectivity_repository_impl.dart';
 import 'package:the_movie_db/src/data/services/remote/authentication_api.dart';
@@ -19,7 +20,13 @@ void main() {
       ),
       authenticationRepository: AuthenticationRepositoryImpl(
         const FlutterSecureStorage(),
-        AuthenticationAPI(http.Client()),
+        AuthenticationAPI(
+          Http(
+            client: http.Client(),
+            apiKey: '8d73e98a010d08d6e272fe2d16cca561',
+            baseUrl: 'https://api.themoviedb.org/3',
+          ),
+        ),
       ),
       child: const MyApp(),
     ),
