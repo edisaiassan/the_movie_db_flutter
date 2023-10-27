@@ -16,24 +16,22 @@ class Http {
         _apiKey = apiKey,
         _baseUrl = baseUrl;
 
-  Future<Either<HttpFailure, String>> request(
+  Future<Either<HttpFailure, R>> request<R>(
     String path, {
+      required Function(String responseBody) onSucces,
     HttpMethod method = HttpMethod.get,
     Map<String, String> headers = const {},
-    Map<String, String> queryParameters = const {}, //el "api_key=""
+    Map<String, String> queryParameters = const {},
     Map<String, dynamic> body = const {},
     bool useApiKey = true,
   }) async {
-    //el path será el código intermedio de la url al consumir la API
-    //o sino un link completo (harbá condicionales)
 
     try {
       if (useApiKey) {
         queryParameters = {
           ...queryParameters,
           'api_key': _apiKey
-        }; //Si el APiKey es true
-        //se va a agregar a los queryParameters
+        };
       }
 
       Uri url = Uri.parse(path.startsWith('http') ? path : '$_baseUrl$path');
@@ -91,8 +89,7 @@ class Http {
 
       final statusCode = response.statusCode;
       if (statusCode >= 200 && statusCode < 300) {
-        //Condición de solicitud exitosa
-        return Either.right(response.body);
+        return Either.right(onSucces(response.body));
       }
       return Either.left(
         //Condición de solicitud fallida
