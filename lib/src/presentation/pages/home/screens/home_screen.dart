@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_db/main.dart';
+import 'package:provider/provider.dart';
+import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: FilledButton(
           onPressed: () {
-            Injector.of(context).authenticationRepository.signOut();
+            context.read<AuthenticationRepository>().signOut();
             Navigator.pushReplacementNamed(context, Routes.splash);
           },
           child: const Text('SignOut'),

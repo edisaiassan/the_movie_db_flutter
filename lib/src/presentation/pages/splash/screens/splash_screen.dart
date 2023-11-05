@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_db/main.dart';
+import 'package:provider/provider.dart';
+import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
+import 'package:the_movie_db/src/domain/repositories/connectivity_repository.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -20,15 +22,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _init() async {
     final routeName = await () async {
-      final injector = Injector.of(context);
-      final connectivityRepository = injector.connectivityRepository;
+      final ConnectivityRepository connectivityRepository = context.read();
+      final AuthenticationRepository authenticationRepository = context.read();
       final hasInternet = await connectivityRepository.hasInternet;
 
       if (!hasInternet) {
         return Routes.offline;
       }
 
-      final authenticationRepository = injector.authenticationRepository;
       final isSignedIn = await authenticationRepository.isSignedIn;
 
       if (!isSignedIn) {
@@ -49,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: CircularProgressIndicator(),
       ),

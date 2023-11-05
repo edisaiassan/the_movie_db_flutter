@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_db/main.dart';
+import 'package:provider/provider.dart';
 import 'package:the_movie_db/src/domain/enum.dart';
+import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -90,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
       _fetching = true;
     });
     //Nuestro Injector escucha
-    final result = await Injector.of(context).authenticationRepository.signIn(
+    final result = await context.read<AuthenticationRepository>().signIn(
           _username,
           _password,
         );
