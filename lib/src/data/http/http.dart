@@ -4,6 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:the_movie_db/src/domain/either.dart';
 import 'dart:developer';
+part 'failure.dart';
+part 'parse_response_body.dart';
+part 'logs.dart';
 
 class Http {
   final Client _client;
@@ -20,7 +23,7 @@ class Http {
 
   Future<Either<HttpFailure, R>> request<R>(
     String path, {
-    required Function(String responseBody) onSucces,
+    required R Function(dynamic responseBody) onSucces,
     HttpMethod method = HttpMethod.get,
     Map<String, String> headers = const {},
     Map<String, String> queryParameters = const {},
@@ -91,15 +94,16 @@ class Http {
       }
 
       final statusCode = response.statusCode;
+      final responseBody = _parseResponseBody(response.body);
 
       logs = {
         ...logs,
         'start_time': DateTime.now().toString(),
         'status_code': statusCode,
-        'response_body': response.body,
+        'response_body': responseBody,
       };
       if (statusCode >= 200 && statusCode < 300) {
-        return Either.right(onSucces(response.body));
+        return Either.right(onSucces(responseBody));
       }
       return Either.left(
         HttpFailure(
@@ -131,34 +135,10 @@ class Http {
       );
     } finally {
       logs = {...logs, 'end_time': DateTime.now().toString()};
-      if (kDebugMode) {
-        log('''
-😊
-------------------------
-${const JsonEncoder.withIndent(' ').convert(logs)}
---------------------
-😊
-''',
-stackTrace: stackTrace,
-);
-      }
+
+      _printLogs(logs, stackTrace);
     }
   }
 }
 
-class HttpFailure {
-  final int? statusCode;
-  final Object? exception;
-
-  HttpFailure({this.statusCode, this.exception});
-}
-
-class NetworkException {}
-
-enum HttpMethod {
-  get,
-  post,
-  patch,
-  delete,
-  put,
-}
+enum HttpMethod { get, post, patch, delete, put }

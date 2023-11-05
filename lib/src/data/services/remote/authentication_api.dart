@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:the_movie_db/src/data/http/http.dart';
 import 'package:the_movie_db/src/domain/either.dart';
 import 'package:the_movie_db/src/domain/enum.dart';
@@ -28,9 +27,7 @@ class AuthenticationAPI {
   Future<Either<SignInFailure, String>> createRequestToken() async {
     final result = await _http.request('/authentication/token/new',
         onSucces: (responseBody) {
-      final json = Map<String, dynamic>.from(
-        jsonDecode(responseBody),
-      );
+      final json = responseBody as Map;
       return json['request_token'] as String;
     });
 
@@ -54,12 +51,8 @@ class AuthenticationAPI {
         'request_token': requestToken,
       },
       onSucces: (responseBody) {
-        final json = Map<String, dynamic>.from(
-          jsonDecode(responseBody),
-        );
-
-        final newRequestToken = json['request_token'] as String;
-        return Either.right(newRequestToken);
+        final json = responseBody as Map;
+        return json['request_token'] as String;
       },
     );
 
@@ -71,17 +64,21 @@ class AuthenticationAPI {
 
   Future<Either<SignInFailure, String>> createSession(
       String requestToken) async {
-    final result = await _http.request('/authentication/session/',
-        method: HttpMethod.post,
-        body: {'request_token': requestToken}, onSucces: (responseBody) {
-      final json = Map<String, dynamic>.from(jsonDecode(responseBody));
-      final sessionId = json['session_id'] as String;
-      return Either.right(sessionId);
-    });
+    final result = await _http.request(
+      '/authentication/session/new', //<---Aquí falta el new
+      method: HttpMethod.post,
+      body: {
+        'request_token': requestToken,
+      },
+      onSucces: (responseBody) {
+        final json = responseBody as Map;
+        return json['session_id'] as String;
+      },
+    );
 
     return result.when(
       _handleFailure,
-      (newRequestToken) => Either.left(newRequestToken),
+      (sessionId) => Either.right(sessionId),
     );
   }
 }
