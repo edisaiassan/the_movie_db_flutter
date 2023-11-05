@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:the_movie_db/src/domain/enum.dart';
-import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
-import 'package:the_movie_db/src/presentation/routes/routes.dart';
+import 'package:the_movie_db/src/presentation/pages/sign_in/screens/controller/sign_in_controller.dart';
+import 'package:the_movie_db/src/presentation/pages/widgets/submit_button.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -12,113 +11,63 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  String _username = '', _password = '';
-  bool _fetching = false; //Para podre bloquear el formulario y mostrar carga
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: Form(
-          child: AbsorbPointer(
-            absorbing: _fetching,
-            child: ListView(
-              reverse: true,
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(64.0),
-              children: [
-                Builder(builder: (context) {
-                  if (_fetching) {
-                    return const Center(
-                        child: CircularProgressIndicator()); //Lógica de carga
-                  }
-                  return FilledButton.icon(
-                    onPressed: () {
-                      final isValid = Form.of(context).validate();
-                      if (isValid) {
-                        _submit(context);
-                      }
-                    },
-                    icon: const Icon(Icons.login),
-                    label: const Text('Sign in'),
-                  );
-                }),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: 'Contraseña'),
-                  onChanged: (text) {
-                    setState(() {
-                      _password = text.replaceAll(' ', '').toLowerCase();
-                    });
-                  },
-                  validator: (text) {
-                    text = text?.replaceAll(' ', '').toLowerCase() ?? '';
-                    if (text.length < 5) {
-                      return 'Invalid password';
-                    }
-                    return null;
-                  },
+        child: ChangeNotifierProvider(
+          create: (context) => SignInController(),
+          child: Form(
+            child: Builder(builder: (context) {
+              final controller =
+                  Provider.of<SignInController>(context, listen: true);
+              return AbsorbPointer(
+                absorbing: controller.fetching,
+                child: ListView(
+                  reverse: true,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.all(64.0),
+                  children: [
+                    const SubmitButton(),
+                    const SizedBox(height: 16.0),
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration:
+                          const InputDecoration(labelText: 'Contraseña'),
+                      onChanged: (text) {
+                        controller.onPasswordChanged(text);
+                      },
+                      validator: (text) {
+                        text = text?.replaceAll(' ', '').toLowerCase() ?? '';
+                        if (text.length < 5) {
+                          return 'Invalid password';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration:
+                          const InputDecoration(labelText: 'Nombre de usuario'),
+                      onChanged: (text) {
+                        controller.onUsernameChanged(text);
+                      },
+                      validator: (text) {
+                        text = text?.trim().toLowerCase() ?? '';
+                        if (text.isEmpty) {
+                          return 'Invalid username';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration:
-                      const InputDecoration(labelText: 'Nombre de usuario'),
-                  onChanged: (text) {
-                    setState(() {
-                      _username = text.trim().toLowerCase();
-                    });
-                  },
-                  validator: (text) {
-                    text = text?.trim().toLowerCase() ?? '';
-                    if (text.isEmpty) {
-                      return 'Invalid username';
-                    }
-                    return null;
-                  },
-                ),
-              ],
-            ),
+              );
+            }),
           ),
         ),
       ),
-    );
-  }
-
-  Future<void> _submit(BuildContext context) async {
-    setState(() {
-      _fetching = true;
-    });
-    //Nuestro Injector escucha
-    final result = await context.read<AuthenticationRepository>().signIn(
-          _username,
-          _password,
-        );
-
-    if (!mounted) {
-      //Comporbando si la vista está renderizada, si no lo está nos detenemos
-      return; //hasta que se renderize y podamos comporbar si el usuario se puede logear
-    }
-    //Función del Either
-    result.when(
-      (failure) {
-        _fetching = false;
-        setState(() {});
-        final message = {
-          SignInFailure.notFound: 'Not Found',
-          SignInFailure.unauthorized: 'Invalid Password',
-          SignInFailure.unknown: 'Error',
-          SignInFailure.network: 'Red',
-        }[failure];
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message!)),
-        );
-      },
-      //Si es correcto, pasamos a Navegar
-      (user) {
-        Navigator.pushReplacementNamed(context, Routes.home);
-      },
     );
   }
 }
