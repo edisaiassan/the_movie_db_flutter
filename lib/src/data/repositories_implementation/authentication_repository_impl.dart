@@ -52,7 +52,6 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
             return sessionResult.when(
               (failure) async => Either.left(failure),
               (sessionId) async {
-                print('🔥 $sessionId sdsdsd-------------');
                 await _secureStorage.write(
                   key: _key,
                   value: sessionId,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_movie_db/src/presentation/pages/sign_in/screens/controller/sign_in_controller.dart';
+import 'package:the_movie_db/src/presentation/pages/sign_in/screens/controller/sign_in_state.dart';
 import 'package:the_movie_db/src/presentation/pages/widgets/submit_button.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -17,7 +18,9 @@ class _SignInScreenState extends State<SignInScreen> {
       appBar: AppBar(),
       body: SafeArea(
         child: ChangeNotifierProvider(
-          create: (context) => SignInController(),
+          create: (context) => SignInController(
+            const SignInState(),
+          ),
           child: Form(
             child: Builder(builder: (context) {
               final controller =
