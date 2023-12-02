@@ -12,7 +12,7 @@ class SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Provider.of<SignInController>(context);
     return controller.fetching
-        ? const CircularProgressIndicator()
+        ? const Center(child: CircularProgressIndicator())
         : FilledButton.icon(
             onPressed: () {
               final isValid = Form.of(context).validate();
@@ -33,6 +33,10 @@ class SubmitButton extends StatelessWidget {
           controller.username,
           controller.password,
         );
+
+    if (!controller.mounted) {
+      return;
+    }
 
     result.when(
       (failure) {
