@@ -23,7 +23,7 @@ class _SignInScreenState extends State<SignInScreen> {
               final controller =
                   Provider.of<SignInController>(context, listen: true);
               return AbsorbPointer(
-                absorbing: controller.fetching,
+                absorbing: controller.state.fetching,
                 child: ListView(
                   reverse: true,
                   physics: const BouncingScrollPhysics(),
