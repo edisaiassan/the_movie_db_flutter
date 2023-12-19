@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_movie_db/src/domain/enum.dart';
-import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/presentation/pages/sign_in/screens/controller/sign_in_controller.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
 
@@ -27,12 +26,7 @@ class SubmitButton extends StatelessWidget {
 
   Future<void> _submit(BuildContext context) async {
     final SignInController controller = context.read();
-    controller.onFetchingChanged(true);
-
-    final result = await context.read<AuthenticationRepository>().signIn(
-          controller.state.username,
-          controller.state.password,
-        );
+    final result = await controller.submit();
 
     if (!controller.mounted) {
       return;
@@ -40,7 +34,6 @@ class SubmitButton extends StatelessWidget {
 
     result.when(
       (failure) {
-        controller.onFetchingChanged(false);
         final message = {
           SignInFailure.notFound: 'Not Found',
           SignInFailure.unauthorized: 'Invalid Password',

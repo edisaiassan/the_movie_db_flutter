@@ -1,8 +1,17 @@
+import 'package:the_movie_db/src/domain/either.dart';
+import 'package:the_movie_db/src/domain/enum.dart';
+import 'package:the_movie_db/src/domain/models/user.dart';
+import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/presentation/global/state_notifier.dart';
 import 'package:the_movie_db/src/presentation/pages/sign_in/screens/controller/sign_in_state.dart';
 
 class SignInController extends StateNotifier<SignInState> {
-  SignInController(super.state);
+  final AuthenticationRepository authenticationRepository;
+
+  SignInController(
+    super.state, {
+    required this.authenticationRepository,
+  });
 
   void onUsernameChanged(String text) {
     onlyUpdate(
@@ -20,9 +29,17 @@ class SignInController extends StateNotifier<SignInState> {
     );
   }
 
-  void onFetchingChanged(bool value) {
-    state = state.copyWith(
-      fetching: value,
+  Future<Either<SignInFailure, User>> submit() async {
+    state = state.copyWith(fetching: true);
+    final result = await authenticationRepository.signIn(
+      state.username,
+      state.password,
     );
+
+    result.when(
+      (_) => state = state.copyWith(fetching: false),
+      (_) => null,
+    );
+    return result;
   }
 }
