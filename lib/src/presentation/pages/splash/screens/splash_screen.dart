@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:the_movie_db/src/domain/repositories/account_repository.dart';
 import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/domain/repositories/connectivity_repository.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
@@ -24,7 +25,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final routeName = await () async {
       final ConnectivityRepository connectivityRepository = context.read();
       final AuthenticationRepository authenticationRepository = context.read();
+      final AccountRepository accountRepository = context.read();
       final hasInternet = await connectivityRepository.hasInternet;
+
 
       if (!hasInternet) {
         return Routes.offline;
@@ -35,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (!isSignedIn) {
         return Routes.signIn;
       }
-      final user = await authenticationRepository.getUserData();
+      final user = await accountRepository.getUserData();
       return user == null ? Routes.signIn : Routes.home;
     }();
 

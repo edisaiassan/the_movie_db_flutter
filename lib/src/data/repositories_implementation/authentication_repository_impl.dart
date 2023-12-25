@@ -1,29 +1,26 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:the_movie_db/src/data/services/local/session_service.dart';
+import 'package:the_movie_db/src/data/services/remote/account_api.dart';
 import 'package:the_movie_db/src/data/services/remote/authentication_api.dart';
 import 'package:the_movie_db/src/domain/either.dart';
 import 'package:the_movie_db/src/domain/enum.dart';
 import '../../domain/models/user.dart';
 import '../../domain/repositories/authentication_repository.dart';
 
-const _key = 'sessionId';
 
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
-  final FlutterSecureStorage _secureStorage;
   final AuthenticationAPI _authenticationAPI;
+  final AccountAPI _accountAPI;
+  final SessionService _sessionService;
 
   AuthenticationRepositoryImpl(
-    this._secureStorage,
     this._authenticationAPI,
+    this._sessionService,
+    this._accountAPI,
   );
 
   @override
-  Future<User?> getUserData() {
-    return Future.value(User());
-  }
-
-  @override
   Future<bool> get isSignedIn async {
-    final sessionId = await _secureStorage.read(key: _key);
+    final sessionId = await _sessionService.sessionId;
     return sessionId != null;
   }
 
@@ -52,11 +49,14 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
             return sessionResult.when(
               (failure) async => Either.left(failure),
               (sessionId) async {
-                await _secureStorage.write(
-                  key: _key,
-                  value: sessionId,
-                );
-                return Either.right(User());
+                await _sessionService.saveSessionid(sessionId);
+               final user = await _accountAPI.getAccount(sessionId);
+
+               if(user == null) {
+                return Either.left(SignInFailure.unknown);
+               }
+
+                return Either.right(user);
               },
             );
           },
@@ -67,6 +67,6 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   @override
   Future<void> signOut() {
-    return _secureStorage.delete(key: _key);
-  }  
+    return _sessionService.signOut();
+  }
 }
