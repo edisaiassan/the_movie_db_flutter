@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:the_movie_db/src/domain/repositories/account_repository.dart';
 import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/domain/repositories/connectivity_repository.dart';
+import 'package:the_movie_db/src/presentation/global/controllers/session_controller.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,8 +27,8 @@ class _SplashScreenState extends State<SplashScreen> {
       final ConnectivityRepository connectivityRepository = context.read();
       final AuthenticationRepository authenticationRepository = context.read();
       final AccountRepository accountRepository = context.read();
+      final SessionController sessionController = context.read();
       final hasInternet = await connectivityRepository.hasInternet;
-
 
       if (!hasInternet) {
         return Routes.offline;
@@ -39,7 +40,13 @@ class _SplashScreenState extends State<SplashScreen> {
         return Routes.signIn;
       }
       final user = await accountRepository.getUserData();
-      return user == null ? Routes.signIn : Routes.home;
+
+      if (user != null) {
+        sessionController.setUser(user);
+        return Routes.home;
+      }
+
+      return Routes.signIn;
     }();
 
     if (mounted) {

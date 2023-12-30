@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_movie_db/src/domain/enum.dart';
+import 'package:the_movie_db/src/presentation/global/controllers/session_controller.dart';
 import 'package:the_movie_db/src/presentation/pages/sign_in/screens/controller/sign_in_controller.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
 
@@ -45,6 +46,8 @@ class SubmitButton extends StatelessWidget {
         );
       },
       (user) {
+        final SessionController sessionController = context.read();
+        sessionController.setUser(user);
         Navigator.pushReplacementNamed(context, Routes.home);
       },
     );

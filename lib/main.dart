@@ -13,6 +13,7 @@ import 'package:the_movie_db/src/data/services/remote/authentication_api.dart';
 import 'package:the_movie_db/src/data/services/remote/internet_checker.dart';
 import 'package:the_movie_db/src/domain/repositories/account_repository.dart';
 import 'package:the_movie_db/src/my_app.dart';
+import 'package:the_movie_db/src/presentation/global/controllers/session_controller.dart';
 import 'src/domain/repositories/authentication_repository.dart';
 import 'src/domain/repositories/connectivity_repository.dart';
 
@@ -44,6 +45,12 @@ void main() {
             AuthenticationAPI(http),
             sessionService,
             accountAPI,
+          ),
+        ),
+        ChangeNotifierProvider<SessionController>(
+          create: (context) => SessionController(
+            authenticationRepository: context.read(), //capturamos el authenticationRepository
+                                                    //que ya existe
           ),
         ),
       ],
