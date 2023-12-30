@@ -21,7 +21,8 @@ class HomeScreen extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           children: [
-            Text(state!.username.toString()),
+            if (state!.avatarPath != null) Image.network(state.avatarPath!),
+            Text(state.username.toString()),
             FilledButton(
               onPressed: () {
                 context.read<AuthenticationRepository>().signOut();
