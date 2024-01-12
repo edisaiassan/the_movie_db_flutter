@@ -20,7 +20,11 @@ class _SignInScreenState extends State<SignInScreen> {
       body: SafeArea(
         child: ChangeNotifierProvider(
           create: (context) => SignInController(
-            const SignInState(),
+            const SignInState(
+              username: '',
+              password: '',
+              fetching: false,
+            ),
             authenticationRepository: context.read<AuthenticationRepository>(),
           ),
           child: Form(
