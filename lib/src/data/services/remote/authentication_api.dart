@@ -1,6 +1,6 @@
 import 'package:the_movie_db/src/data/http/http.dart';
 import 'package:the_movie_db/src/domain/either.dart';
-import 'package:the_movie_db/src/domain/enum.dart';
+import 'package:the_movie_db/src/domain/failures/sign_in_failure.dart';
 
 class AuthenticationAPI {
   AuthenticationAPI(this._http);
@@ -11,17 +11,17 @@ class AuthenticationAPI {
     if (failure.statusCode != null) {
       switch (failure.statusCode!) {
         case 401:
-          return Either.left(SignInFailure.unauthorized);
+          return Either.left(Unauthorized());
         case 404:
-          return Either.left(SignInFailure.notFound);
+          return Either.left(NotFound());
         default:
-          return Either.left(SignInFailure.unknown);
+          return Either.left(Unknown());
       }
     }
     if (failure.exception is NetworkException) {
-      return Either.left(SignInFailure.network);
+      return Either.left(Network());
     }
-    return Either.left(SignInFailure.unknown);
+    return Either.left(Unknown());
   }
 
   Future<Either<SignInFailure, String>> createRequestToken() async {
@@ -32,8 +32,8 @@ class AuthenticationAPI {
     });
 
     return result.when(
-      _handleFailure,
-      (requestToken) => Either.right(requestToken),
+      left: _handleFailure,
+      right: (requestToken) => Either.right(requestToken),
     );
   }
 
@@ -57,8 +57,8 @@ class AuthenticationAPI {
     );
 
     return result.when(
-      _handleFailure,
-      (newRequestToken) => Either.right(newRequestToken),
+      left: _handleFailure,
+      right: (newRequestToken) => Either.right(newRequestToken),
     );
   }
 
@@ -77,8 +77,8 @@ class AuthenticationAPI {
     );
 
     return result.when(
-      _handleFailure,
-      (sessionId) => Either.right(sessionId),
+      left: _handleFailure,
+      right: (sessionId) => Either.right(sessionId),
     );
   }
 }

@@ -2,10 +2,9 @@ import 'package:the_movie_db/src/data/services/local/session_service.dart';
 import 'package:the_movie_db/src/data/services/remote/account_api.dart';
 import 'package:the_movie_db/src/data/services/remote/authentication_api.dart';
 import 'package:the_movie_db/src/domain/either.dart';
-import 'package:the_movie_db/src/domain/enum.dart';
+import 'package:the_movie_db/src/domain/failures/sign_in_failure.dart';
 import '../../domain/models/user.dart';
 import '../../domain/repositories/authentication_repository.dart';
-
 
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
   final AuthenticationAPI _authenticationAPI;
@@ -32,8 +31,8 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     final requestTokenResult = await _authenticationAPI.createRequestToken();
 
     return requestTokenResult.when(
-      (failure) => Either.left(failure),
-      (requestToken) async {
+      left: (failure) => Either.left(failure),
+      right: (requestToken) async {
         final loginResult = await _authenticationAPI.createSessionWithLogin(
           username: username,
           password: password,
@@ -41,20 +40,20 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         );
 
         return loginResult.when(
-          (failure) async => Either.left(failure),
-          (newRequestToken) async {
+          left: (failure) async => Either.left(failure),
+          right: (newRequestToken) async {
             final sessionResult =
                 await _authenticationAPI.createSession(newRequestToken);
 
             return sessionResult.when(
-              (failure) async => Either.left(failure),
-              (sessionId) async {
+              left: (failure) async => Either.left(failure),
+              right: (sessionId) async {
                 await _sessionService.saveSessionid(sessionId);
-               final user = await _accountAPI.getAccount(sessionId);
+                final user = await _accountAPI.getAccount(sessionId);
 
-               if(user == null) {
-                return Either.left(SignInFailure.unknown);
-               }
+                if (user == null) {
+                  return Either.left(Unknown());
+                }
 
                 return Either.right(user);
               },

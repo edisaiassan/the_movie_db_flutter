@@ -1,5 +1,5 @@
 import 'package:the_movie_db/src/domain/either.dart';
-import 'package:the_movie_db/src/domain/enum.dart';
+import 'package:the_movie_db/src/domain/failures/sign_in_failure.dart';
 import 'package:the_movie_db/src/domain/models/user.dart';
 
 abstract class AuthenticationRepository {

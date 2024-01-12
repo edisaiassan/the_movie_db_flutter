@@ -37,8 +37,8 @@ class SignInController extends StateNotifier<SignInState> {
     );
 
     result.when(
-      (_) => state = state.copyWith(fetching: false),
-      (_) => null,
+      left: (_) => state = state.copyWith(fetching: false),
+      right: (_) => null,
     );
     return result;
   }

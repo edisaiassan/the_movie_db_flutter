@@ -1,9 +1,11 @@
-abstract class SignInFailure {}
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class Network extends SignInFailure {}
+part 'sign_in_failure.freezed.dart';
 
-class NotFound extends SignInFailure {}
-
-class Unauthorized extends SignInFailure {}
-
-class Unknown extends SignInFailure {}
+@freezed
+class SignInFailure with _$SignInFailure{
+  factory SignInFailure.notFound() = NotFound;
+  factory SignInFailure.network() = Network;
+  factory SignInFailure.unauthorized() = Unauthorized;
+  factory SignInFailure.unknown() = Unknown;
+}
