@@ -123,11 +123,12 @@ class __$$UserImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$UserImpl implements _User {
+class _$UserImpl extends _User {
   const _$UserImpl(
       {required this.id,
       required this.username,
-      @JsonKey(name: 'avatar', fromJson: avatarPathFromJson) this.avatarPath});
+      @JsonKey(name: 'avatar', fromJson: avatarPathFromJson) this.avatarPath})
+      : super._();
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserImplFromJson(json);
@@ -175,12 +176,13 @@ class _$UserImpl implements _User {
   }
 }
 
-abstract class _User implements User {
+abstract class _User extends User {
   const factory _User(
       {required final int id,
       required final String username,
       @JsonKey(name: 'avatar', fromJson: avatarPathFromJson)
       final String? avatarPath}) = _$UserImpl;
+  const _User._() : super._();
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
