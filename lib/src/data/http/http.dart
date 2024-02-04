@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
-import 'package:the_movie_db/src/domain/either.dart';
+import 'package:the_movie_db/src/domain/either/either.dart';
 import 'dart:developer';
 part 'failure.dart';
 part 'parse_response_body.dart';
@@ -108,13 +108,14 @@ class Http {
       return Either.left(
         HttpFailure(
           statusCode: statusCode,
+          data: responseBody,
         ),
       );
     } catch (e, s) {
       stackTrace = s;
       logs = {
         ...logs,
-        'exception': e.runtimeType,
+        'exception': e.runtimeType.toString(),
       };
       if (e is SocketException || e is ClientException) {
         logs = {

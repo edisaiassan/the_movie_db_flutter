@@ -1,5 +1,5 @@
 import 'package:the_movie_db/src/data/http/http.dart';
-import 'package:the_movie_db/src/domain/models/user.dart';
+import 'package:the_movie_db/src/domain/models/user/user.dart';
 
 class AccountAPI {
   final Http _http;
@@ -17,8 +17,8 @@ class AccountAPI {
       },
     );
     return result.when(
-      (_) => null,
-      (user) => user,
+     left: (_) => null,
+      right: (user) => user,
     );
   }
 }

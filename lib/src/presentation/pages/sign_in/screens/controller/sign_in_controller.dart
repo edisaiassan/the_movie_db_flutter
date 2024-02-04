@@ -1,6 +1,6 @@
-import 'package:the_movie_db/src/domain/either.dart';
-import 'package:the_movie_db/src/domain/failures/sign_in_failure.dart';
-import 'package:the_movie_db/src/domain/models/user.dart';
+import 'package:the_movie_db/src/domain/either/either.dart';
+import 'package:the_movie_db/src/domain/failures/sign_in/sign_in_failure.dart';
+import 'package:the_movie_db/src/domain/models/user/user.dart';
 import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/presentation/global/state_notifier.dart';
 import 'package:the_movie_db/src/presentation/pages/sign_in/screens/controller/sign_in_state.dart';

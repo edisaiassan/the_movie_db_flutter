@@ -1,4 +1,4 @@
-import 'package:the_movie_db/src/domain/models/user.dart';
+import 'package:the_movie_db/src/domain/models/user/user.dart';
 import 'package:the_movie_db/src/domain/repositories/authentication_repository.dart';
 import 'package:the_movie_db/src/presentation/global/state_notifier.dart';
 

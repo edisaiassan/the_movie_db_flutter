@@ -1,9 +1,9 @@
 import 'package:the_movie_db/src/data/services/local/session_service.dart';
 import 'package:the_movie_db/src/data/services/remote/account_api.dart';
 import 'package:the_movie_db/src/data/services/remote/authentication_api.dart';
-import 'package:the_movie_db/src/domain/either.dart';
-import 'package:the_movie_db/src/domain/failures/sign_in_failure.dart';
-import '../../domain/models/user.dart';
+import 'package:the_movie_db/src/domain/either/either.dart';
+import 'package:the_movie_db/src/domain/failures/sign_in/sign_in_failure.dart';
+import 'package:the_movie_db/src/domain/models/user/user.dart';
 import '../../domain/repositories/authentication_repository.dart';
 
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
@@ -52,7 +52,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
                 final user = await _accountAPI.getAccount(sessionId);
 
                 if (user == null) {
-                  return Either.left(Unknown());
+                  return Either.left(SignInFailure.unknown());
                 }
 
                 return Either.right(user);
