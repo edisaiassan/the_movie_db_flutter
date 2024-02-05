@@ -3,8 +3,10 @@ part 'media.freezed.dart';
 part 'media.g.dart';
 
 enum MediaType {
-  @JsonValue('movie') movie,
-   @JsonValue('tv') tv,
+  @JsonValue('movie')
+  movie,
+  @JsonValue('tv')
+  tv,
 }
 
 @freezed
@@ -29,7 +31,7 @@ class Media with _$Media {
     @JsonKey(
       name: 'vote_average',
     )
-    required double voteAverage,  
+    required double voteAverage,
     @JsonKey(
       name: 'media_type',
     )
@@ -45,4 +47,16 @@ Object? readTitleValue(Map map, String _) {
 
 Object? readOriginalTitleValue(Map map, String _) {
   return map['original_title'] ?? map['original_name'];
+}
+
+List<Media> getMediaList(List list) {
+  return list
+      .where(
+        (e) =>
+            e['media_type'] != 'person' &&
+            e['poster_path'] != null &&
+            e['backdrop_path'] != null,
+      )
+      .map((e) => Media.fromJson(e))
+      .toList();
 }

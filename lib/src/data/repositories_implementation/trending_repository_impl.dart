@@ -3,6 +3,7 @@ import 'package:the_movie_db/src/domain/either/either.dart';
 import 'package:the_movie_db/src/domain/either/enums.dart';
 import 'package:the_movie_db/src/domain/failures/http_request/http_request_failure.dart';
 import 'package:the_movie_db/src/domain/models/media/media.dart';
+import 'package:the_movie_db/src/domain/models/performer/performer.dart';
 import 'package:the_movie_db/src/domain/repositories/trending_repository.dart';
 
 class TrendingRepositoryImpl implements TrendingRepository {
@@ -15,5 +16,11 @@ class TrendingRepositoryImpl implements TrendingRepository {
     TimeWindow timeWindow,
   ) {
     return _trendingApi.getMoviesAndSeries(timeWindow);
+  }
+
+  @override
+  Future<Either<HttpRequestFailure, List<Performer>>> getPerformers(
+  ) {
+    return _trendingApi.getPerformes(TimeWindow.day);
   }
 }
