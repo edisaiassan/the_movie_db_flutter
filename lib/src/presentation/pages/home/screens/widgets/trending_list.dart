@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:the_movie_db/src/domain/either/either.dart';
 import 'package:the_movie_db/src/domain/either/enums.dart';
-import 'package:the_movie_db/src/domain/failures/http_request/http_request_failure.dart';
 import 'package:the_movie_db/src/domain/models/media/media.dart';
 import 'package:the_movie_db/src/presentation/global/utils/get_image_url.dart';
 import 'package:the_movie_db/src/presentation/global/widgets/request_failed.dart';
 import 'package:the_movie_db/src/presentation/pages/home/controller/home_controller.dart';
 import 'package:the_movie_db/src/presentation/pages/home/screens/widgets/trending_tile.dart';
 
-typedef EitherLisMedia = Either<HttpRequestFailure, List<Media>>;
 
 class TrendingList extends StatelessWidget {
   const TrendingList({super.key});
