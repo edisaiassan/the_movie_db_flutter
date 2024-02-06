@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_movie_db/src/presentation/pages/home/screens/main_tabs.dart';
 import 'package:the_movie_db/src/presentation/routes/app_routes.dart';
 import 'package:the_movie_db/src/presentation/routes/routes.dart';
 
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        initialRoute: Routes.splash,
-        routes: appRoutes,
+        /* initialRoute: Routes.splash,
+        routes: appRoutes, */
+        home: MainTabs(),
       ),
     );
   }

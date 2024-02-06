@@ -17,6 +17,8 @@ import 'package:the_movie_db/src/domain/repositories/account_repository.dart';
 import 'package:the_movie_db/src/domain/repositories/trending_repository.dart';
 import 'package:the_movie_db/src/my_app.dart';
 import 'package:the_movie_db/src/presentation/global/controllers/session_controller.dart';
+import 'package:the_movie_db/src/presentation/pages/home/controller/home_controller.dart';
+import 'package:the_movie_db/src/presentation/pages/home/controller/state/home_state.dart';
 import 'src/domain/repositories/authentication_repository.dart';
 import 'src/domain/repositories/connectivity_repository.dart';
 
@@ -51,11 +53,17 @@ void main() {
           ),
         ),
         Provider<TrendingRepository>(
-          create: (_) =>  TrendingRepositoryImpl(TrendingApi(http)),
+          create: (_) => TrendingRepositoryImpl(TrendingApi(http)),
         ),
         ChangeNotifierProvider<SessionController>(
           create: (context) => SessionController(
             authenticationRepository: context.read(),
+          ),
+        ),
+        ChangeNotifierProvider<HomeController>(
+          create: (context) => HomeController(
+            HomeState(loading: true),
+            trendingRepository: context.read(),
           ),
         ),
       ],
