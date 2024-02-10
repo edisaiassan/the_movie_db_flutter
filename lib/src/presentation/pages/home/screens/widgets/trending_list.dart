@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:the_movie_db/src/domain/either/either.dart';
 import 'package:the_movie_db/src/domain/either/enums.dart';
+import 'package:the_movie_db/src/domain/failures/http_request/http_request_failure.dart';
 import 'package:the_movie_db/src/domain/models/media/media.dart';
 import 'package:the_movie_db/src/presentation/global/utils/get_image_url.dart';
 import 'package:the_movie_db/src/presentation/global/widgets/request_failed.dart';
 import 'package:the_movie_db/src/presentation/pages/home/controller/home_controller.dart';
 import 'package:the_movie_db/src/presentation/pages/home/screens/widgets/trending_tile.dart';
 
+typedef EitherLisMedia = Either<HttpRequestFailure, List<Media>>;
 
 class TrendingList extends StatelessWidget {
   const TrendingList({super.key});
@@ -14,7 +17,9 @@ class TrendingList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final HomeController controller = context.watch();
+    final controller = Provider.of<HomeController>(context);
+    final state = controller.state;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -40,7 +45,7 @@ class TrendingList extends StatelessWidget {
                   child: Text('Last week'),
                 ),
               ],
-              value: controller.state.timeWindow,
+              value: state.timeWindow,
               onChanged: (timeWindow) {},
             ),
           ],
@@ -50,21 +55,22 @@ class TrendingList extends StatelessWidget {
           child: SizedBox(
             height: 256.0,
             child: Center(
-              child: controller.state.loading
+              child: state.loading
                   ? const CircularProgressIndicator()
-                  : controller.state.moviesAndSeries == null
+                  : state.moviesAndSeries == null
                       ? RequestFailed(text: 'Error')
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(24.0),
                           child: ListView.separated(
                             physics: const BouncingScrollPhysics(),
+                            key: PageStorageKey<int>(1),
                             scrollDirection: Axis.horizontal,
-                            itemCount: controller.state.moviesAndSeries!.length,
+                            itemCount: state.moviesAndSeries!.length,
                             separatorBuilder: (_, __) =>
                                 const SizedBox(width: 8.0),
                             itemBuilder: (_, index) {
                               final media =
-                                  controller.state.moviesAndSeries![index];
+                                  state.moviesAndSeries![index];
                               return TrendingTile(
                                 image: getImageUrl(media.posterPath),
                                 score: media.voteAverage.toString(),
