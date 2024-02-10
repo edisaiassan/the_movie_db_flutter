@@ -62,7 +62,7 @@ void main() {
         ),
         ChangeNotifierProvider<HomeController>(
           create: (context) => HomeController(
-            HomeState(loading: true),
+            HomeState(),
             trendingRepository: context.read(),
           ),
         ),

@@ -7,6 +7,7 @@ import 'package:the_movie_db/src/domain/models/media/media.dart';
 import 'package:the_movie_db/src/presentation/global/utils/get_image_url.dart';
 import 'package:the_movie_db/src/presentation/global/widgets/request_failed.dart';
 import 'package:the_movie_db/src/presentation/pages/home/controller/home_controller.dart';
+import 'package:the_movie_db/src/presentation/pages/home/controller/state/home_state.dart';
 import 'package:the_movie_db/src/presentation/pages/home/screens/widgets/trending_tile.dart';
 
 typedef EitherLisMedia = Either<HttpRequestFailure, List<Media>>;
@@ -18,7 +19,7 @@ class TrendingList extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final controller = Provider.of<HomeController>(context);
-    final state = controller.state;
+    final moviesAndSeries = controller.state.moviesAndSeries;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,44 +46,52 @@ class TrendingList extends StatelessWidget {
                   child: Text('Last week'),
                 ),
               ],
-              value: state.timeWindow,
-              onChanged: (timeWindow) {},
+              value: moviesAndSeries.timeWindow,
+              onChanged: (timeWindow) {
+                controller.onTimeWindowChanged(timeWindow!);
+              },
             ),
           ],
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: SizedBox(
-            height: 256.0,
-            child: Center(
-              child: state.loading
-                  ? const CircularProgressIndicator()
-                  : state.moviesAndSeries == null
-                      ? RequestFailed(text: 'Error')
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(24.0),
-                          child: ListView.separated(
-                            physics: const BouncingScrollPhysics(),
-                            key: PageStorageKey<int>(1),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: state.moviesAndSeries!.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(width: 8.0),
-                            itemBuilder: (_, index) {
-                              final media =
-                                  state.moviesAndSeries![index];
-                              return TrendingTile(
-                                image: getImageUrl(media.posterPath),
-                                score: media.voteAverage.toString(),
-                                type: media.type == MediaType.movie
-                                    ? Icons.movie_rounded
-                                    : Icons.tv_rounded,
-                                height: 256.0,
-                                width: 171.0,
-                              );
-                            },
-                          ),
-                        ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24.0),
+            child: SizedBox(
+              height: 256.0,
+              child: Center(
+                child: moviesAndSeries.when(
+                  loading: (_) => const CircularProgressIndicator(),
+                  failed: (_) => RequestFailed(
+                    text: 'Error',
+                    onPressed: () {
+                      controller.loadMoviesAndSeries(
+                        moviesAndSeries: MoviesAndSeriesState.loading(
+                            moviesAndSeries.timeWindow),
+                      );
+                    },
+                  ),
+                  loaded: (_, list) => ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    key: const PageStorageKey<int>(1),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: list.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8.0),
+                    itemBuilder: (_, index) {
+                      final media = list[index];
+                      return TrendingTile(
+                        image: getImageUrl(media.posterPath),
+                        score: media.voteAverage.toString(),
+                        type: media.type == MediaType.movie
+                            ? Icons.movie_rounded
+                            : Icons.tv_rounded,
+                        height: 256.0,
+                        width: 171.0,
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
           ),
         ),

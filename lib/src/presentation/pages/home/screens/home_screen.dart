@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
-    Provider.of<HomeController>(context, listen: false).init();
+    context.read<HomeController>().init();
     super.initState();
   }
 
@@ -25,17 +25,19 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('HomeScreen'),
       ),
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: () async {
+          await context.read<HomeController>().init();
+        },
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics()),
           children: const [
             TrendingList(),
-             Padding(
+            Padding(
               padding: EdgeInsets.only(top: 16.0),
               child: TrendingPerformers(),
-            ), 
+            ),
           ],
         ),
       ),
